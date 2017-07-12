@@ -4,7 +4,9 @@
 	"private": true,
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "jest"
+  		"lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx --fix src specs",
+  		"lint:test": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx src specs",
+  		"test": "npm run lint:test && jest --useStderr --forceExit --runInBand"
 	},
 	"dependencies": {
 		"react": "16.0.0-alpha.12",
@@ -13,6 +15,8 @@
 	"devDependencies": {
 		"babel-jest": "20.0.3",
 		"babel-preset-react-native": "2.1.0",
+		"eslint": "^4.2.0",
+		"eslint-plugin-chronobank": "github:ChronoBank/eslint-plugin-chronobank",
 		"jest": "20.0.4",
 		"react-test-renderer": "16.0.0-alpha.12"
 	},
