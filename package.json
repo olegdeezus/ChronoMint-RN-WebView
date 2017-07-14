@@ -4,13 +4,17 @@
 	"private": true,
 	"scripts": {
 		"start": "node node_modules/react-native/local-cli/cli.js start",
-  		"lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx --fix src specs",
-  		"lint:test": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx src specs",
-  		"test": "npm run lint:test && jest --useStderr --forceExit --runInBand"
+		"lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx --fix src specs",
+		"lint:test": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx src specs",
+		"build": "cd ChronoMint && npm install && npm run build && cp -r ./build ../ios/www && mkdir -p ../android/app/src/main/assets/ && cp -r  ./build/ ../android/app/src/main/assets/www && cd ..",
+		"clean": "rm -rf ./ChronoMint/build ./ChronoMint/node_modules ./ios/www ./android/app/src/main/assets/www",
+		"test": "npm run lint:test && jest --useStderr --forceExit --runInBand"
 	},
 	"dependencies": {
 		"react": "16.0.0-alpha.12",
-		"react-native": "0.46.1"
+		"react-native": "0.46.1",
+		"react-native-fs": "^2.3.3",
+		"react-native-static-server": "^0.1.7"
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",

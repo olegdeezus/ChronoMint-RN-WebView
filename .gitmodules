@@ -1,0 +1,4 @@
+[submodule "ChronoMint"]
+	path = ChronoMint
+	url = https://github.com/olegdizus/ChronoMint.git
+	branch = develop

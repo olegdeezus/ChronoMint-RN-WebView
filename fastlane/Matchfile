@@ -1,0 +1,8 @@
+git_url "https://#{ENV["GITHUB_USER"]}:#{ENV["GITHUB_PASSWORD"]}@github.com/ChronoICO/chrono-ci.git"
+
+type "appstore" # The default type, can be: appstore, adhoc, enterprise or development
+
+app_identifier ["io.chronobank.chronomint.webview"]
+
+# For all available options run `fastlane match --help`
+# Remove the # in the beginning of the line to enable the other options

@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true
+    },
+    "exclude": [
+        "node_modules",
+        "ChronoMint",
+        "android",
+        "ios",
+        "fastlane"
+    ]
+}

@@ -1,4 +1,4 @@
-package com.chronomintrnwebview;
+package io.chronobank.chronomint.webview;
 
 import com.facebook.react.ReactActivity;
 

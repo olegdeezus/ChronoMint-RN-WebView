@@ -1,53 +1,63 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
-  Text,
-  View
+  WebView,
+  Platform
 } from 'react-native';
+import StaticServer from 'react-native-static-server'
+import RNFS from 'react-native-fs';
+
+let server
 
 export default class ChronoMintRNWebView extends Component {
+  state = {
+    url: ''
+  }
+
+  componentDidMount()
+  {
+    (async () => {
+      let serverPath
+      if (Platform.OS === 'android') {
+        serverPath = RNFS.DocumentDirectoryPath + '/www'
+
+        if (await RNFS.exists(serverPath)) {
+          await RNFS.unlink(serverPath)
+        }
+
+        await RNFS.mkdir(serverPath)
+
+        const files = await RNFS.readDirAssets('www')
+
+        await Promise.all(files.map(({ path, name }) => {
+          RNFS.copyFileAssets(path, `${serverPath}/${name}`)
+        }))
+      } else {
+        serverPath = RNFS.MainBundlePath + '/www'
+      }
+        console.log(await RNFS.readdir(serverPath))
+      
+      server = new StaticServer(0, serverPath, { localOnly: true });
+
+      server.start().then(url => {
+        console.log(serverPath, url)
+        this.setState({ url })
+      })
+    })()
+  }
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
+    return this.state.url ?
+      <WebView
+        source={{ uri: this.state.url }}
+        javaScriptEnabled={true}
+        startInLoadingState={true}
+        bounces={false}
+        style={[
+          Platform.OS === 'ios' && { marginTop: 18 }
+        ]}
+      /> :
+      null
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 
 AppRegistry.registerComponent('ChronoMintRNWebView', () => ChronoMintRNWebView);

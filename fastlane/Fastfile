@@ -1,0 +1,63 @@
+fastlane_version "1.86.1"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+  end
+
+  desc "Submit a new Build to Apple TestFlight"
+  desc "This will also make sure the profile is up to date"
+  lane :alpha do
+    create_keychain(
+      name: ENV["KEYCHAIN_NAME"],
+      password: ENV["KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      timeout: 3600
+    )
+
+    match(
+      keychain_name: ENV["KEYCHAIN_NAME"],
+      keychain_password: ENV["KEYCHAIN_PASSWORD"],
+      type: "appstore",
+      readonly: true
+    ) # more information: https://codesigning.guide
+    
+    increment_build_number(xcodeproj: './ios/ChronoMintRNWebView.xcodeproj') # Increment the build number
+
+    gym(scheme: "ChronoMintRNWebView", project: './ios/ChronoMintRNWebView.xcodeproj') # Build the app
+    pilot(skip_submission: true) # Upload the app to TestFlight
+  end
+
+  after_all do |lane|
+    # slack(channel: "deploys", message: "Successfully deployed new MyApp alpha update to TestFlight.")
+  end
+end
+
+platform :android do
+  before_all do
+    # ENV["SLACK_URL"] = "https://hooks.slack.com/services/..."
+  end
+
+  desc "Submit a new Alpha Build to Play Store"
+  lane :alpha do
+    
+    gradle(task: 'clean', project_dir: "android/") # Clean the Gradle project
+
+    gradle(task: "assemble", build_type: "Release", project_dir: "android/") # Build the Release APK
+    
+    increment_version_code()
+
+    supply(
+      track: "alpha",
+      json_key: "./google-play-api-secret.json",
+      package_name: "io.chronobank.chronomint.webview",
+      apk: "android/app/build/outputs/apk/app-release.apk"
+    ) # Upload the APK to the Play Store (alpha)
+  end
+
+  after_all do |lane|
+    # slack(channel: "deploys", message: "Successfully deployed new MyApp alpha update to the Play Store.")
+  end
+end
