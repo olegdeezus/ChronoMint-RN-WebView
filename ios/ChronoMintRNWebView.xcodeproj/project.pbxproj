@@ -1166,7 +1166,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 21;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 7SHEC94536;
 				HEADER_SEARCH_PATHS = (
@@ -1185,6 +1185,7 @@
 				PRODUCT_NAME = ChronoMintRNWebView;
 				PROVISIONING_PROFILE = "4f0d1a75-4dc9-4185-82aa-6800ad262f80";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.chronobank.chronomint.webview";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1195,7 +1196,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CURRENT_PROJECT_VERSION = 18;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = 7SHEC94536;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1213,6 +1214,7 @@
 				PRODUCT_NAME = ChronoMintRNWebView;
 				PROVISIONING_PROFILE = "4f0d1a75-4dc9-4185-82aa-6800ad262f80";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore io.chronobank.chronomint.webview";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
