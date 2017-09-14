@@ -61,7 +61,7 @@ export default class WebViewWrapper extends Component {
         serverPath = RNFS.MainBundlePath + '/www'
       }
       
-      server = new StaticServer(0, serverPath, { localOnly: true })
+      server = new StaticServer(0, serverPath)
 
       server.start().then(uri => {
         this.setState({ uri })

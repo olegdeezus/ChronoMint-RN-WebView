@@ -1,2 +1,4 @@
+import { AppRegistry } from 'react-native'
+import ChronoMintRNWebView from './src/app'
 
-require('./index.android')
+AppRegistry.registerComponent('ChronoMintRNWebView', () => ChronoMintRNWebView)
