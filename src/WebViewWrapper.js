@@ -1,18 +1,14 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {
   WebView,
   Platform,
   Linking
 } from 'react-native'
-import StaticServer from 'react-native-static-server'
-import RNFS from 'react-native-fs'
 import { connect } from 'react-redux'
 import { addWallet, getWallet } from './redux/wallets/actions'
 import { hasWallet } from './redux/wallets/selectors'
 import { setPinCode } from './redux/pincode/actions'
-
-let server
 
 const mapStateToProps = (state) => ({
   hasWallet: async ({ provider, network }) => ({
@@ -27,46 +23,16 @@ const mapDispatchToProps = {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-export default class WebViewWrapper extends Component {
+export default class WebViewWrapper extends React.Component {
   static propTypes = {
     addWallet: PropTypes.func,
     getWallet: PropTypes.func
   }
 
   state = {
-    uri: '',
     injectedVariables: {
       isMobile: true
     }
-  }
-
-  componentDidMount () {
-    (async () => {
-      let serverPath
-      if (Platform.OS === 'android') {
-        serverPath = RNFS.DocumentDirectoryPath + '/www'
-
-        if (await RNFS.exists(serverPath)) {
-          await RNFS.unlink(serverPath)
-        }
-
-        await RNFS.mkdir(serverPath)
-
-        const files = await RNFS.readDirAssets('www')
-
-        await Promise.all(files.map(({ path, name }) => {
-          RNFS.copyFileAssets(path, `${serverPath}/${name}`)
-        }))
-      } else {
-        serverPath = RNFS.MainBundlePath + '/www'
-      }
-      
-      server = new StaticServer(0, serverPath)
-
-      server.start().then(uri => {
-        this.setState({ uri })
-      })
-    })()
   }
 
   handleMessage = async (event) => {
@@ -79,6 +45,8 @@ export default class WebViewWrapper extends Component {
         'HAS_WALLET': this.props.hasWallet,
         'SET_PINCODE': this.props.setPinCode
       }[message]
+
+      console.log({ message, payload })
 
       const result = action && await action(payload)
 
@@ -93,27 +61,27 @@ export default class WebViewWrapper extends Component {
   }
 
   render () {
-    const { injectedVariables, uri } = this.state
+    const { injectedVariables } = this.state
 
     const injectedJS = `Object.assign(window, ${JSON.stringify(injectedVariables)});`
 
-    return uri ?
-      <WebView
-        source={{ uri }}
-        injectedJavaScript={injectedJS}
-        bounces={false}
-        ref={ref => this.webview = ref}
-        style={[
-          Platform.OS === 'ios' && { marginTop: 18 }
-        ]}
-        onMessage={this.handleMessage}
-        onNavigationStateChange={(event) => {
-          if (!event.url.startsWith('http')) {
-            this.webview.stopLoading()
-            Linking.openURL(event.url)
-          }
-        }}
-      /> :
-      null
+    return <WebView
+      source={require('../ChronoMint/build/index.html')}
+      injectedJavaScript={injectedJS}
+      bounces={false}
+      ref={ref => this.webview = ref}
+      style={[
+        Platform.OS === 'ios' && { marginTop: 18 }
+      ]}
+      onMessage={this.handleMessage}
+      onNavigationStateChange={({ url }) => {
+        if (url.startsWith('react') || !url.startsWith('http://localhost')) {
+          this.webview.stopLoading()
+        }
+        if (!url.startsWith('http://localhost') && !url.startsWith('react')) {
+          Linking.openURL(url)
+        }
+      }}
+    />
   }
 }
