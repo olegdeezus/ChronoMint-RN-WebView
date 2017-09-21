@@ -26,7 +26,8 @@ const mapDispatchToProps = {
 export default class WebViewWrapper extends React.Component {
   static propTypes = {
     addWallet: PropTypes.func,
-    getWallet: PropTypes.func
+    getWallet: PropTypes.func,
+    setPinCode: PropTypes.func
   }
 
   state = {
@@ -45,8 +46,6 @@ export default class WebViewWrapper extends React.Component {
         'HAS_WALLET': this.props.hasWallet,
         'SET_PINCODE': this.props.setPinCode
       }[message]
-
-      console.log({ message, payload })
 
       const result = action && await action(payload)
 

@@ -1,3 +1,6 @@
 {
-  "extends": ["plugin:chronobank/recommended"]
+  "extends": [
+    "plugin:chronobank/recommended",
+    "plugin:chronobank-react/recommended"
+  ]
 }
