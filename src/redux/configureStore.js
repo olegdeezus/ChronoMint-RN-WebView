@@ -1,5 +1,5 @@
-import {compose, applyMiddleware, createStore, combineReducers } from 'redux'
-import {persistStore, autoRehydrate} from 'redux-persist'
+import { applyMiddleware, createStore, combineReducers } from 'redux'
+import { persistStore, autoRehydrate } from 'redux-persist'
 import thunk from 'redux-thunk'
 import { composeWithDevTools } from 'remote-redux-devtools'
 import createSensitiveStorage from 'redux-persist-sensitive-storage'

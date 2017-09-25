@@ -2,31 +2,30 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   WebView,
-  Platform,
-  Linking
+  Platform
 } from 'react-native'
 import { connect } from 'react-redux'
-import { addWallet, getWallet } from './redux/wallets/actions'
-import { hasWallet } from './redux/wallets/selectors'
+import { addKey, getKey } from './redux/keys/actions'
+import { hasKey } from './redux/keys/selectors'
 import { setPinCode } from './redux/pincode/actions'
 
 const mapStateToProps = (state) => ({
-  hasWallet: async ({ provider, network }) => ({
-    hasWallet: hasWallet(state, provider, network)
+  hasKey: async ({ provider, network }) => ({
+    hasKey: hasKey(state, provider, network)
   })
 })
 
 const mapDispatchToProps = {
-  addWallet,
+  addKey,
   setPinCode,
-  getWallet,
+  getKey,
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
 export default class WebViewWrapper extends React.Component {
   static propTypes = {
-    addWallet: PropTypes.func,
-    getWallet: PropTypes.func,
+    addKey: PropTypes.func,
+    getKey: PropTypes.func,
     setPinCode: PropTypes.func
   }
 
@@ -40,15 +39,10 @@ export default class WebViewWrapper extends React.Component {
     try {
       const { message, ...payload } = JSON.parse(event.nativeEvent.data)
 
-      const action = {
-        'ADD_WALLET': this.props.addWallet,
-        'GET_WALLET': this.props.getWallet,
-        'HAS_WALLET': this.props.hasWallet,
-        'SET_PINCODE': this.props.setPinCode
-      }[message]
+      const action = this.props[message]
 
       const result = action && await action(payload)
-
+      
       result && this.webview.postMessage(JSON.stringify({
         message,
         ...result
@@ -65,7 +59,10 @@ export default class WebViewWrapper extends React.Component {
     const injectedJS = `Object.assign(window, ${JSON.stringify(injectedVariables)});`
 
     return <WebView
-      source={require('../ChronoMint/build/index.html')}
+      source={Platform.OS === 'android' ?
+        { uri: 'file:///android_asset/build/index.html' } :
+        require('../ChronoMint/build/index.html')
+      }
       injectedJavaScript={injectedJS}
       bounces={false}
       ref={ref => this.webview = ref}
@@ -73,14 +70,6 @@ export default class WebViewWrapper extends React.Component {
         Platform.OS === 'ios' && { marginTop: 18 }
       ]}
       onMessage={this.handleMessage}
-      onNavigationStateChange={({ url }) => {
-        if (url.startsWith('react') || !url.startsWith('http://localhost')) {
-          this.webview.stopLoading()
-        }
-        if (!url.startsWith('http://localhost') && !url.startsWith('react')) {
-          Linking.openURL(url)
-        }
-      }}
     />
   }
 }

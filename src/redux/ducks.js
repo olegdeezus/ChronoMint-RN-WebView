@@ -1,2 +1,2 @@
-export { wallets } from './wallets/reducer'
+export { keys } from './keys/reducer'
 export { pincode } from './pincode/reducer'
