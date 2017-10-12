@@ -19,7 +19,7 @@ export const addKey = ({ key, provider, network }) => async (dispatch, getState)
   return {}
 }
 
-export const getKey = ({ provider, network, pinCode }) =>
+export const getKey = ({ provider, network, pinCode, isFingerprintCorrect }) =>
   async (dispatch, getState) => {
     const { key } = getEncryptedKeys(getState(), provider, network)[0]
 
@@ -27,13 +27,16 @@ export const getKey = ({ provider, network, pinCode }) =>
       return { error: 'No stored keys available'}
     }
 
-    const isPinCodeCorrect = await dispatch(verifyPinCode(pinCode)) 
+    if (!isFingerprintCorrect) { 
+      const isPinCodeCorrect = await dispatch(verifyPinCode(pinCode)) 
+      
+      if (!isPinCodeCorrect) {
+        return { error: 'Incorrect pin-code' }
+      }
 
-    if (!isPinCodeCorrect) {
-      return { error: 'Incorrect pin-code' }
     }
-
-    const pinCodeHash = SHA256(`${pinCode}${salt}`).toString()
+    
+    const { pinCodeHash } = getState().pincode
 
     return {
       key: AES.decrypt(key, pinCodeHash).toString(enc.Utf8),

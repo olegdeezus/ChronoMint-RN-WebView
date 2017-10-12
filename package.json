@@ -6,7 +6,7 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx --fix src specs",
     "lint:test": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx src specs",
-    "build": "cd ChronoMint && npm install && npm run standalone && cd ..",
+    "build": "cd ChronoMint && npm install && npm run mobile && rm -rf web ../ios/web && mv -f build web && mv -f web/ ../ios/ && cd ..",
     "test": "npm run lint:test && jest --useStderr --forceExit --runInBand"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
     "prop-types": "^15.5.10",
     "react": "^16.0.0-alpha.12",
     "react-native": "^0.48.3",
+    "react-native-fingerprint-scanner": "^2.2.0",
     "react-native-sensitive-info": "github:mCodex/react-native-sensitive-info#keystore",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
@@ -30,7 +31,7 @@
     "babel-preset-react-native": "2.1.0",
     "eslint": "^4.2.0",
     "eslint-plugin-chronobank": "github:ChronoBank/eslint-plugin-chronobank",
-    "eslint-plugin-chronobank-react": "github:chronobank/eslint-plugin-chronobank-react",
+    "eslint-plugin-chronobank-react": "github:ChronoBank/eslint-plugin-chronobank-react",
     "jest": "20.0.4",
     "react-test-renderer": "16.0.0-alpha.12"
   },

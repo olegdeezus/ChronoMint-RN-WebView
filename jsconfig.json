@@ -5,9 +5,10 @@
     },
     "exclude": [
         "node_modules",
-        "ChronoMint",
         "android",
         "ios",
-        "fastlane"
+        "ChronoMint",
+        "fastlane",
+        "web"
     ]
 }

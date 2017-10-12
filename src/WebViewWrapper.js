@@ -2,12 +2,19 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {
   WebView,
+  View,
+  ImageBackground,
+  Dimensions,
+  ActivityIndicator,
   Platform
 } from 'react-native'
 import { connect } from 'react-redux'
 import { addKey, getKey } from './redux/keys/actions'
 import { hasKey } from './redux/keys/selectors'
 import { setPinCode } from './redux/pincode/actions'
+import FingerprintScanner from 'react-native-fingerprint-scanner'
+
+const { width, height } = Dimensions.get('window')
 
 const mapStateToProps = (state) => ({
   hasKey: async ({ provider, network }) => ({
@@ -30,16 +37,33 @@ export default class WebViewWrapper extends React.Component {
   }
 
   state = {
-    injectedVariables: {
-      isMobile: true
-    }
+    isSplashVisible: true
   }
 
   handleMessage = async (event) => {
+    const { addKey, setPinCode, getKey, hasKey } = this.props
+
     try {
       const { message, ...payload } = JSON.parse(event.nativeEvent.data)
 
-      const action = this.props[message]
+      const init = async () => {
+        this.setState({ isSplashVisible: false })
+      }
+
+      const scanFingerprint = async ({ description, provider, network }) => {
+        await FingerprintScanner.authenticate({ description, fallbackEnabled: false })
+        return await this.props.getKey({ provider, network, isFingerprintCorrect: true })
+      }
+
+
+      const action = {
+        addKey,
+        setPinCode,
+        getKey,
+        hasKey,
+        scanFingerprint,
+        init
+      }[message]
 
       const result = action && await action(payload)
       
@@ -53,23 +77,50 @@ export default class WebViewWrapper extends React.Component {
     }
   }
 
-  render () {
-    const { injectedVariables } = this.state
-
-    const injectedJS = `Object.assign(window, ${JSON.stringify(injectedVariables)});`
-
-    return <WebView
-      source={Platform.OS === 'android' ?
-        { uri: 'file:///android_asset/build/index.html' } :
-        require('../ChronoMint/build/index.html')
-      }
-      injectedJavaScript={injectedJS}
-      bounces={false}
-      ref={ref => this.webview = ref}
-      style={[
-        Platform.OS === 'ios' && { marginTop: 18 }
-      ]}
-      onMessage={this.handleMessage}
+  renderSplash = () => <ImageBackground
+    source={require('./assets/chronomint.2208x2208.png')}
+    resizeMode='cover'
+    style={{
+      position: 'absolute',
+      width,
+      height,
+      justifyContent: 'center',
+      alignItems: 'center'
+    }}
+  >
+    <ActivityIndicator
+      color='white'
+      size='large'
+      style={{
+        top: 150
+      }}
     />
+  </ImageBackground>
+
+  render () {
+    const { isSplashVisible } = this.state
+
+    const injectedJS = `setTimeout(function(){window.postMessage(JSON.stringify({ message: 'init' }));}, 50);`
+
+    return <View
+      style={{flex: 1}}
+    >
+      <WebView
+        source={{ uri: Platform.OS === 'android' ?
+          'file:///android_asset/build/index.html' :
+          'web/index.html'
+        }}
+        scalesPageToFit={false}
+        injectedJavaScript={injectedJS}
+        bounces={false}
+        ref={ref => this.webview = ref}
+        style={[
+          { flex: 1 },
+          Platform.OS === 'ios' && { marginTop: 18 }
+        ]}
+        onMessage={this.handleMessage}
+      />
+      { isSplashVisible && this.renderSplash() }
+    </View>
   }
 }
