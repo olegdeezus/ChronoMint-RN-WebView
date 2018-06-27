@@ -7,20 +7,23 @@
     "lint": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx --fix src specs",
     "lint:test": "./node_modules/eslint/bin/eslint.js --ext .js,.jsx src specs",
     "build": "cd ChronoMint && npm install && npm run standalone && cd ..",
-    "test": "npm run lint:test && jest --useStderr --forceExit --runInBand"
+    "test": "npm run lint:test && jest --useStderr --forceExit --runInBand",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "crypto-js": "^3.1.9-1",
     "prop-types": "^15.5.10",
     "react": "^16.0.0-alpha.12",
-    "react-native": "^0.48.3",
+    "react-native": "^0.49.0",
     "react-native-sensitive-info": "github:mCodex/react-native-sensitive-info#keystore",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-persist": "^4.9.1",
     "redux-persist-sensitive-storage": "^1.0.0",
     "redux-thunk": "^2.2.0",
-    "remote-redux-devtools": "^0.5.12"
+    "remote-redux-devtools": "^0.5.12",
+    "snyk": "^1.85.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
@@ -36,5 +39,6 @@
   },
   "jest": {
     "preset": "react-native"
-  }
+  },
+  "snyk": true
 }
